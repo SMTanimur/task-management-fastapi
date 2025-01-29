@@ -15,6 +15,9 @@ class Settings(BaseSettings):
     # CORS
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000"]
     
+    # Debug mode
+    DEBUG: bool = False
+    
     class Config:
         case_sensitive = True
         env_file = ".env"
