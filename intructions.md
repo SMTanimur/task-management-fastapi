@@ -1,1 +1,2 @@
-on app/db  connect session.py so please this connect will root main.py
+This app should be authentication should be cookie system and as  login return cookie token and expire data
+

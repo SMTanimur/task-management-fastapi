@@ -1,6 +1,5 @@
 from typing import Generator, Optional
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import Depends, HTTPException, status, Request
 from jose import jwt, JWTError
 from sqlmodel import Session
 
@@ -8,17 +7,20 @@ from app.core.config import settings
 from app.db.session import get_session
 from app.models.user import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login")
-
 def get_current_user(
+    request: Request,
     session: Session = Depends(get_session),
-    token: str = Depends(oauth2_scheme)
 ) -> User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
     )
+    
+    # Get token from cookie
+    token = request.cookies.get(settings.COOKIE_NAME)
+    if not token:
+        raise credentials_exception
+        
     try:
         payload = jwt.decode(
             token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]

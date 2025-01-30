@@ -9,8 +9,15 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     JWT_ALGORITHM: str = "HS256"
     
+    # Cookie settings
+    COOKIE_NAME: str = "task_management_session"
+    COOKIE_SECURE: bool = False  # Set to True in production with HTTPS
+    COOKIE_DOMAIN: str = "localhost"  # Change in production
+    COOKIE_SAMESITE: str = "lax"
+    
     # Database
     DATABASE_URL: PostgresDsn
+    PORT: int
     
     # CORS
     ALLOWED_ORIGINS: List[str] = ["http://localhost:3000"]
