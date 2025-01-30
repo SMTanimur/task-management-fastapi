@@ -16,8 +16,16 @@ def create_task(
     current_user: User = Depends(get_current_active_user),
     session: Session = Depends(get_session)
 ):
-    task_service = TaskService(session)
-    return task_service.create_task(task_in, current_user)
+    try:
+        task_service = TaskService(session)
+        return task_service.create_task(task_in, current_user)
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Error creating task: {str(e)}"
+        )
 
 @router.get("/", response_model=List[Task])
 def get_tasks(

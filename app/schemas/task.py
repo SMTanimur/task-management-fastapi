@@ -1,6 +1,6 @@
 from datetime import datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from app.models.task import TaskPriority, TaskStatus
 
 class TaskBase(BaseModel):
@@ -10,12 +10,28 @@ class TaskBase(BaseModel):
     priority: TaskPriority = TaskPriority.MEDIUM
     status: TaskStatus = TaskStatus.TODO
 
+    class Config:
+        orm_mode = True
+        use_enum_values = True
+
 class TaskCreate(TaskBase):
     assignee_id: Optional[int] = None
+
+    @validator('assignee_id')
+    def validate_assignee_id(cls, v):
+        if v is not None and v <= 0:
+            return None
+        return v
 
 class TaskUpdate(TaskBase):
     title: Optional[str] = None
     assignee_id: Optional[int] = None
+
+    @validator('assignee_id')
+    def validate_assignee_id(cls, v):
+        if v is not None and v <= 0:
+            return None
+        return v
 
 class TaskInDBBase(TaskBase):
     id: int
